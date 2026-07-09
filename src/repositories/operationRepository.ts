@@ -3,7 +3,7 @@ export interface OperationRepository {
     create(operation: NewOperation, calculatedFields: {
         totalAmount: number;
         advancedAmount: number;
-        comission: number;
+        commission: number;
         amountToDeposit: number;
     }): Promise<Operation>;
 
