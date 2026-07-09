@@ -7,5 +7,6 @@ export function errorHandler(err: Error, req: Request, res: Response, next: Next
         return;
     }
 
+    console.log(err);
     res.status(500).json({ error: 'Ocurrió un error interno en el servidor.' });
 }

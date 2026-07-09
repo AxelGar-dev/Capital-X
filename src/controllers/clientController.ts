@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import type { ClientService } from "../service/clientService.js";
+import type { ClientService } from "../services/clientService.js";
 import { asyncHandler } from "../middleware/asyncHandler.js";
 import { AppError } from "../errors/appError.js";
 

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { buildClientController } from "../controllers/clientController.js";
-import type { ClientService } from "../service/clientService.js";
+import type { ClientService } from "../services/clientService.js";
 
 export function buildClientRoutes(clientService: ClientService): Router {
     const router = Router();
