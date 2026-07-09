@@ -1,5 +1,5 @@
-import type { ValidationResult } from "./types.js";
-import type { NewInvoice } from "../models/operations.js";
+import type { NewInvoice } from '../models/operations.js';
+import type { ValidationResult } from './types.js';
 
 const MIN_TERM_DAYS = 15;
 const MAX_TERM_DAYS = 120;
@@ -27,6 +27,10 @@ export function validateInvoice(invoice: NewInvoice): ValidationResult {
         return { valid: false, reason: 'El monto de la factura debe ser mayor a 0.' };
     }
 
+    if (isNaN(invoice.issueDate.getTime()) || isNaN(invoice.dueDate.getTime())) {
+        return { valid: false, reason: 'Las fechas de la factura no son válidas.' };
+    }
+
     const issueDateMs = toUtcMidnight(invoice.issueDate);
     const dueDateMs = toUtcMidnight(invoice.dueDate);
     const todayMs = toUtcMidnight(new Date());
@@ -35,14 +39,18 @@ export function validateInvoice(invoice: NewInvoice): ValidationResult {
         return { valid: false, reason: 'La fecha de emisión no puede ser futura.' };
     }
 
+    if (dueDateMs <= todayMs) {
+        return { valid: false, reason: 'La fecha de vencimiento debe ser posterior a hoy.' };
+    }
+
     if (dueDateMs <= issueDateMs) {
         return { valid: false, reason: 'La fecha de vencimiento debe ser posterior a la fecha de emisión.' };
     }
 
-    const termDays = (dueDateMs - issueDateMs) / MS_PER_DAY;
+    const termDays = (dueDateMs - todayMs) / MS_PER_DAY;
 
     if (termDays < MIN_TERM_DAYS || termDays > MAX_TERM_DAYS) {
-        return { valid: false, reason: `El plazo debe estar entre ${MIN_TERM_DAYS} y ${MAX_TERM_DAYS} días.` };
+        return { valid: false, reason: `El plazo restante debe estar entre ${MIN_TERM_DAYS} y ${MAX_TERM_DAYS} días.` };
     }
 
     return { valid: true };

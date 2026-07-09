@@ -3,7 +3,7 @@ import { AppError } from '../errors/appError.js';
 
 export function errorHandler(err: Error, req: Request, res: Response, next: NextFunction): void {
     if(err instanceof AppError) {
-        res.status(err.statusCode).json({ error: err.message });
+        res.status(err.statusCode).json({ error: err.message, ...(err.details ? { details: err.details } : []) });
         return;
     }
 
