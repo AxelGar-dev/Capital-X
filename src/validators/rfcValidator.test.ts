@@ -18,7 +18,7 @@ describe('validateRfc', () => {
     });
 
     it('Incorrect format (starts with digits, not letters', () => {
-        const result = validateRfc("ABC8503");
+        const result = validateRfc("123850315XY1");
         expect(result.valid).toBe(false);
     });
 

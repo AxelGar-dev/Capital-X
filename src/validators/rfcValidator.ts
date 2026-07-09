@@ -1,7 +1,4 @@
-interface RfcValidationResult {
-    valid: boolean;
-    reason?: string;
-}
+import type { ValidationResult } from "./types.js";
 
 const RFC_PERSONA_MORAL_REGEX = /^[A-ZÑ&]{3}\d{6}[A-Z0-9]{3}$/;
 
@@ -23,37 +20,35 @@ function isValidRfcDate(yy: string, mm: string, dd: string): boolean {
     const maxDaysThisMonth = daysInMonth[month - 1];
 
     if (maxDaysThisMonth === undefined) {
-    // Unreachable given the month check above, but keeps TypeScript's
-    // noUncheckedIndexedAccess check satisfied without lying with a `!`.
-    return false;
+        return false;
     }
 
     return day <= maxDaysThisMonth;
 }
 
-function normalizeRfc(rawRfc: string): string {
+export function normalizeRfc(rawRfc: string): string {
     return rawRfc.trim().toUpperCase();
 }
 
-export function validateRfc(rawRfc: string): RfcValidationResult {
-    rawRfc = normalizeRfc(rawRfc);
+export function validateRfc(rawRfc: string): ValidationResult {
+    const rfc = normalizeRfc(rawRfc);
 
-    if(rawRfc.length !== 12) 
+    if(rfc.length !== 12) 
         return {
             valid: false,
-            reason: `El RFC debe tener exactamente 12 caracteres (se recibieron ${rawRfc.length}).`,
+            reason: `El RFC debe tener exactamente 12 caracteres (se recibieron ${rfc.length}).`,
 
         }
-    if(!RFC_PERSONA_MORAL_REGEX.test(rawRfc)) {
+    if(!RFC_PERSONA_MORAL_REGEX.test(rfc)) {
         return {
             valid: false,
             reason: 'El RFC debe tener el formato: 3 letras + 6 dígitos + 3 caracteres alfanuméricos.',
         }
     }
 
-    const yy = rawRfc.substring(3, 5);
-    const mm = rawRfc.substring(5, 7);
-    const dd = rawRfc.substring(7, 9);
+    const yy = rfc.substring(3, 5);
+    const mm = rfc.substring(5, 7);
+    const dd = rfc.substring(7, 9);
 
     if(!isValidRfcDate(yy, mm, dd)) {
         return {
