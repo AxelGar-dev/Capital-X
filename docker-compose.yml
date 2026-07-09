@@ -1,0 +1,18 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: capitalx_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: capitalx
+      MYSQL_USER: capitalx_user
+      MYSQL_PASSWORD: capitalx_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  db_data:

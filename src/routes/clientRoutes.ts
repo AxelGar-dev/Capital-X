@@ -6,8 +6,8 @@ export function buildClientRoutes(clientService: ClientService): Router {
     const router = Router();
     const controller = buildClientController(clientService);
 
-    router.post('/clientes', controller.create);
-    router.patch('/clientes/:id/aprobar', controller.approve);
+    router.post('/clients', controller.create);
+    router.patch('/clients/:id/approve', controller.approve);
 
     return router;
 }

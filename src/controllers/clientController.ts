@@ -3,9 +3,19 @@ import type { ClientService } from "../services/clientService.js";
 import { asyncHandler } from "../middleware/asyncHandler.js";
 import { AppError } from "../errors/appError.js";
 
+function isBlank(value: unknown): boolean {
+    return typeof value !== 'string' || value.trim().length === 0;
+}
+
 export function buildClientController(clientService: ClientService) {
     const create = asyncHandler(async (req: Request, res: Response) => {
-        const client = await clientService.create(req.body);
+        const { businessName, rfc, email } = req.body;
+
+        if (isBlank(businessName) || isBlank(rfc) || isBlank(email)) {
+            throw new AppError(400, 'Los campos razon_social, rfc y email son obligatorios.');
+        }
+
+        const client = await clientService.create({ businessName, rfc, email });
         res.status(201).json(client);
     });
 
