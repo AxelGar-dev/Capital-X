@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { validateInvoice } from './invoiceValidator.js';
-import type { NewInvoice } from '../models/operations.js';
+import type { NewInvoice } from '../models/operation.js';
 
 const baseInvoice: NewInvoice = {
     folio: 'FOL-001',

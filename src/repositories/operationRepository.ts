@@ -1,4 +1,4 @@
-import type { NewOperation, Operation } from "../models/operations.js";
+import type { NewOperation, Operation } from "../models/operation.js";
 export interface OperationRepository {
     create(operation: NewOperation, calculatedFields: {
         totalAmount: number;

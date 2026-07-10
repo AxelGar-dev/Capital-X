@@ -1,4 +1,4 @@
-import type { NewOperation, Operation, Invoice } from '../models/operations.js';
+import type { NewOperation, Operation, Invoice } from '../models/operation.js';
 import type { OperationRepository } from './operationRepository.js';
 
 export class InMemoryOperationRepository implements OperationRepository {

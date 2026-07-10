@@ -16,4 +16,5 @@ export const pool = mysql.createPool({
     database: requireEnv('DB_NAME'),
     waitForConnections: true,
     connectionLimit: 10,
+    charset: 'utf8mb4'
 });

@@ -1,4 +1,4 @@
-import type { NewInvoice } from '../models/operations.js';
+import type { NewInvoice } from '../models/operation.js';
 import type { ValidationResult } from './types.js';
 
 const MIN_TERM_DAYS = 15;

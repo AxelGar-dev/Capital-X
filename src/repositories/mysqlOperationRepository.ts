@@ -1,5 +1,5 @@
 import type { Pool } from 'mysql2/promise';
-import type { NewOperation, Operation, Invoice } from '../models/operations.js';
+import type { NewOperation, Operation, Invoice } from '../models/operation.js';
 import type { OperationRepository } from './operationRepository.js';
 
 interface OperationRow {
@@ -21,6 +21,10 @@ interface InvoiceRow {
     amount: string;
     issue_date: Date;
     due_date: Date;
+}
+
+function toDateOnlyString(date: Date): string {
+    return date.toISOString().slice(0, 10);
 }
 
 function mapRowToOperation(row: OperationRow, invoices: Invoice[]): Operation {
@@ -83,8 +87,8 @@ export class MysqlOperationRepository implements OperationRepository {
                 invoice.folio,
                 invoice.debtor,
                 invoice.amount,
-                invoice.issueDate,
-                invoice.dueDate,
+                toDateOnlyString(invoice.issueDate),
+                toDateOnlyString(invoice.dueDate),
             ]);
 
             await connection.query(
