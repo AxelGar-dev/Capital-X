@@ -1,5 +1,5 @@
 import type { Pool } from 'mysql2/promise';
-import type { NewOperation, Operation, Invoice } from '../models/operation.js';
+import type { NewOperation, Operation, Invoice, ClientSummary } from '../models/operation.js';
 import type { OperationRepository } from './operationRepository.js';
 
 interface OperationRow {
@@ -23,8 +23,10 @@ interface InvoiceRow {
     due_date: Date;
 }
 
-function toDateOnlyString(date: Date): string {
-    return date.toISOString().slice(0, 10);
+interface ClientSummaryRow {
+    operations_count: number;
+    total_advanced_amount: string | null;
+    nearest_due_date: Date | null;
 }
 
 function mapRowToOperation(row: OperationRow, invoices: Invoice[]): Operation {
@@ -51,6 +53,10 @@ function mapRowToInvoice(row: InvoiceRow): Invoice {
         issueDate: row.issue_date,
         dueDate: row.due_date,
     };
+}
+
+function toDateOnlyString(date: Date): string {
+    return date.toISOString().slice(0, 10);
 }
 
 export class MysqlOperationRepository implements OperationRepository {
@@ -114,12 +120,10 @@ export class MysqlOperationRepository implements OperationRepository {
 
             const invoices = (invoiceRows as InvoiceRow[]).map(mapRowToInvoice);
             return mapRowToOperation(operationRow, invoices);
-        }
-        catch (err) {
+        } catch (err) {
             await connection.rollback();
             throw err;
-        }
-        finally {
+        } finally {
             connection.release();
         }
     }
@@ -130,5 +134,26 @@ export class MysqlOperationRepository implements OperationRepository {
             [clientId, folios]
         );
         return (rows as { folio: string }[]).map((row) => row.folio);
+    }
+
+    async getClientSummary(clientId: number): Promise<ClientSummary> {
+        const [rows] = await this.pool.query(
+            `SELECT
+                (SELECT COUNT(*) FROM operations WHERE client_id = ?) AS operations_count,
+                (SELECT COALESCE(SUM(advanced_amount), 0) FROM operations WHERE client_id = ?) AS total_advanced_amount,
+                (SELECT MIN(i.due_date)
+                FROM invoices i
+                JOIN operations o ON o.id = i.operation_id
+                WHERE o.client_id = ? AND i.due_date > CURDATE()) AS nearest_due_date`,
+            [clientId, clientId, clientId]
+        );
+
+        const row = (rows as ClientSummaryRow[])[0];
+
+        return {
+            operationsCount: row ? Number(row.operations_count) : 0,
+            totalAdvancedAmount: row && row.total_advanced_amount ? Number(row.total_advanced_amount) : 0,
+            nearestDueDate: row && row.nearest_due_date ? toDateOnlyString(new Date(row.nearest_due_date)) : null,
+        };
     }
 }

@@ -18,8 +18,8 @@ const clientService = new ClientService(clientRepository);
 const operationRepository = new MysqlOperationRepository(pool);
 const operationService = new OperationService(operationRepository, clientRepository);
 
-app.use('/', buildClientRoutes(clientService));
-app.use('/', buildOperationRoutes(operationService));
+app.use('/clients', buildClientRoutes(clientService, operationService));
+app.use('/operations', buildOperationRoutes(operationService));
 app.use(errorHandler);
 
 export default app;

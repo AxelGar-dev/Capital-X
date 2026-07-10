@@ -1,4 +1,4 @@
-import type { NewOperation, Operation } from "../models/operation.js";
+import type { ClientSummary, NewOperation, Operation } from "../models/operation.js";
 export interface OperationRepository {
     create(operation: NewOperation, calculatedFields: {
         totalAmount: number;
@@ -8,4 +8,6 @@ export interface OperationRepository {
     }): Promise<Operation>;
 
     findExistingFolios(clientId: number, folios: string[]): Promise<string[]>;
+
+    getClientSummary(clientId: number): Promise<ClientSummary>
 }

@@ -2,12 +2,13 @@ import type { Request, Response } from "express";
 import type { ClientService } from "../services/clientService.js";
 import { asyncHandler } from "../middleware/asyncHandler.js";
 import { AppError } from "../errors/appError.js";
+import type { OperationService } from "../services/operationService.js";
 
 function isBlank(value: unknown): boolean {
     return typeof value !== 'string' || value.trim().length === 0;
 }
 
-export function buildClientController(clientService: ClientService) {
+export function buildClientController(clientService: ClientService, operationService: OperationService) {
     const create = asyncHandler(async (req: Request, res: Response) => {
         const { businessName, rfc, email } = req.body;
 
@@ -29,5 +30,15 @@ export function buildClientController(clientService: ClientService) {
         res.status(200).json(client);
     });
 
-    return { create, approve }
+    const getSummary = asyncHandler(async (req: Request, res: Response) => {
+        const id = Number(req.params.id);
+        if(Number.isNaN(id)) {
+            throw new AppError(404, 'El id del cliente debe ser un número válido.');
+        }
+
+        const summary = await operationService.getClientSummary(id);
+        res.status(200).json(summary);
+    })
+
+    return { create, approve, getSummary }
 }

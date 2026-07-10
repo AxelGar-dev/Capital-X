@@ -28,3 +28,9 @@ export interface NewOperation {
     clientId: number;
     invoices: NewInvoice[];
 }
+
+export interface ClientSummary {
+    operationsCount: number;
+    totalAdvancedAmount: number;
+    nearestDueDate: string | null;
+}

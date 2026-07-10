@@ -1,6 +1,6 @@
 import type { ClientRepository } from '../repositories/clientRepository.js';
 import type { OperationRepository } from '../repositories/operationRepository.js';
-import type { NewOperation, Operation } from '../models/operation.js';
+import type { ClientSummary, NewOperation, Operation } from '../models/operation.js';
 import { validateInvoice } from '../validators/invoiceValidator.js';
 import { AppError } from '../errors/appError.js';
 
@@ -86,5 +86,14 @@ export class OperationService {
             commission,
             amountToDeposit,
         });
+    }
+
+    async getClientSummary(clientId: number): Promise<ClientSummary> {
+        const client = await this.clientRepository.findById(clientId);
+        if(!client) {
+            throw new AppError(404, 'El cliente no existe.');
+        }
+
+        return this.operationRepository.getClientSummary(clientId);
     }
 }

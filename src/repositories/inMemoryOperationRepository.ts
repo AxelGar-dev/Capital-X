@@ -1,4 +1,4 @@
-import type { NewOperation, Operation, Invoice } from '../models/operation.js';
+import type { NewOperation, Operation, Invoice, ClientSummary } from '../models/operation.js';
 import type { OperationRepository } from './operationRepository.js';
 
 export class InMemoryOperationRepository implements OperationRepository {
@@ -57,5 +57,31 @@ export class InMemoryOperationRepository implements OperationRepository {
         }
 
         return existing;
+    }
+
+    async getClientSummary(clientId: number): Promise<ClientSummary> {
+        const clientOperations = this.operations.filter((op) => op.clientId === clientId);
+
+        const operationsCount = clientOperations.length;
+        const totalAdvancedAmount = clientOperations.reduce(
+            (sum, op) => sum + op.advancedAmount,
+            0
+        );
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        let nearestDueDate: Date | null = null;
+        for (const operation of clientOperations) {
+            for (const invoice of operation.invoices) {
+                if (invoice.dueDate > today) {
+                    if (nearestDueDate === null || invoice.dueDate < nearestDueDate) {
+                        nearestDueDate = invoice.dueDate;
+                    }
+                }
+            }
+        }
+
+        return { operationsCount, totalAdvancedAmount, nearestDueDate: nearestDueDate ? nearestDueDate.toISOString().slice(0, 10) : null, };
     }
 }

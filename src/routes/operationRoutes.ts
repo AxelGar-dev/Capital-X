@@ -6,7 +6,7 @@ export function buildOperationRoutes(operationService: OperationService): Router
     const router = Router();
     const controller = buildOperationController(operationService);
 
-    router.post('/operation', controller.create);
+    router.post('/', controller.create);
 
     return router;
 }
