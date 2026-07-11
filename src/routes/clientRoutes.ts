@@ -9,7 +9,7 @@ export function buildClientRoutes(clientService: ClientService, operationService
 
     router.post('/', controller.create);
     router.patch('/:id/approve', controller.approve);
-    router.get('/:id/resume', controller.getSummary);
+    router.get('/:id/summary', controller.getSummary);
 
     return router;
 }
