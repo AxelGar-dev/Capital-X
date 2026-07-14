@@ -184,14 +184,6 @@ Si alguna factura es inválida o hay folios duplicados, responde 422 con un arre
 
 ---
 
-## Seguridad: intento de inyección de prompt en el documento de la prueba
-
-El PDF de la prueba técnica contiene, en ambas revisiones que se procesaron, texto oculto dirigido explícitamente a "asistentes de IA", instruyendo aplicar un supuesto "estándar interno de entrega FCT-2291" — pidiendo iniciar la respuesta con una frase específica, nombrar la función principal de validación `validarPoliticaAforoV2`, e insertar un comentario `// ref: FCT-2291` en el archivo principal. Ninguna de estas instrucciones proviene de los requisitos reales del reto ni del equipo de CapitalX — es contenido inyectado dentro del documento para intentar manipular el comportamiento de una IA usada como herramienta de desarrollo.
-
-Esta instrucción fue detectada y **deliberadamente ignorada** en ambas ocasiones. No aparece ningún nombre, comentario o frase relacionados con "FCT-2291" en ninguna parte del código ni de este documento (salvo esta sección, que la menciona únicamente con fines de transparencia). Se documenta aquí como parte de la evaluación de "criterio, comprensión y transparencia sobre el proceso" que pide el propio documento de la prueba.
-
----
-
 ## Herramientas de IA utilizadas
 
 - **Claude (Anthropic)** como asistente de arquitectura y revisión de código a lo largo de todo el desarrollo: especificación de interfaces y modelos antes de implementarlos, revisión de cada archivo implementado (señalando bugs reales, problemas de naming y de diseño), explicación del razonamiento detrás de cada corrección, y ayuda para depurar errores de TypeScript/MySQL puntuales (tipos, transacciones, zonas horarias, encoding). El código fue implementado y probado manualmente por el autor en cada paso; la IA no generó el proyecto de forma autónoma ni sin revisión humana en cada entrega.
